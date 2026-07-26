@@ -5,7 +5,7 @@ import { VitePWA } from "vite-plugin-pwa";
 export default defineConfig({
   // PENTING: Jika repo GitHub Anda bernama "couple-tracker", ubah base menjadi '/couple-tracker/'
   // Jika menggunakan custom domain, biarkan '/'
-  base: "/",
+  base: "Web-App/couple-tracker/",
   plugins: [
     react(),
     VitePWA({
