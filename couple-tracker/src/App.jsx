@@ -19,7 +19,7 @@ function App() {
   return (
     <AuthProvider>
       <Toaster position="top-center" richColors />
-      <BrowserRouter>
+      <BrowserRouter basename="/Web-App">
         <Routes>
           {/* Public / Auth Routes */}
           <Route element={<AuthLayout />}>
