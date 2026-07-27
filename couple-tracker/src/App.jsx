@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "sonner";
 import { AuthProvider } from "./contexts/AuthContext";
 import AuthLayout from "./layouts/AuthLayout";
@@ -19,7 +19,7 @@ function App() {
   return (
     <AuthProvider>
       <Toaster position="top-center" richColors />
-      <BrowserRouter basename="/Web-App">
+      <HashRouter basename="/Web-App">
         <Routes>
           {/* Public / Auth Routes */}
           <Route element={<AuthLayout />}>
@@ -40,7 +40,7 @@ function App() {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </AuthProvider>
   );
 }
