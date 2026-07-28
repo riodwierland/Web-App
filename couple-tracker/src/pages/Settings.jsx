@@ -7,21 +7,23 @@ export default function Settings() {
   useEffect(() => {
     const root = window.document.documentElement;
 
-    // Hapus class 'dark' terlebih dahulu untuk mereset keadaan
-    root.classList.remove("dark");
-
-    // Logika presisi untuk Tailwind CSS
-    if (theme === "system") {
+    if (theme === "light") {
+      // Hapus mode gelap
+      root.classList.remove("dark");
+    } else if (theme === "dark") {
+      // Paksa mode gelap
+      root.classList.add("dark");
+    } else if (theme === "system") {
+      // Cek sistem bawaan
       const systemPrefersDark = window.matchMedia(
         "(prefers-color-scheme: dark)",
       ).matches;
       if (systemPrefersDark) {
         root.classList.add("dark");
+      } else {
+        root.classList.remove("dark");
       }
-    } else if (theme === "dark") {
-      root.classList.add("dark");
     }
-    // Jika theme === "light", kita tidak perlu menambahkan apa-apa karena itu adalah default
 
     localStorage.setItem("theme", theme);
   }, [theme]);
