@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import "leaflet/dist/leaflet.css"; // BARIS WAJIB UNTUK MENCEGAH PETA PUTIH
+import { useEffect, useState } from "react";
+import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import { Navigation } from "lucide-react";
@@ -42,14 +42,12 @@ const partnerIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-// Komponen helper untuk menggeser peta secara dinamis ke lokasi Anda
+// Komponen helper untuk menggeser peta secara dinamis
 const RecenterMap = ({ location }) => {
   const map = useMap();
   useEffect(() => {
     if (location) {
       map.flyTo([location.latitude, location.longitude], 16, { animate: true });
-
-      // Trik untuk memaksa peta melakukan render ulang jika ukuran kontainer berubah
       setTimeout(() => {
         map.invalidateSize();
       }, 100);
@@ -64,19 +62,41 @@ export default function MapPage() {
   const { myLocation, partnerLocation, isSharing, toggleSharing } =
     useLocations();
 
-  // Koordinat default Mataram NTB
+  // STATE BARU: Menyimpan lokasi sementara saat baru membuka peta
+  const [localPos, setLocalPos] = useState(null);
+
+  useEffect(() => {
+    // Meminta izin dan melacak lokasi Anda SEGERA saat halaman dibuka
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setLocalPos({
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+            accuracy: pos.coords.accuracy,
+            updated_at: new Date().toISOString(),
+          });
+        },
+        (err) => console.warn("Gagal mengambil lokasi:", err.message),
+        { enableHighAccuracy: true },
+      );
+    }
+  }, []);
+
+  // LOGIKA BARU: Gunakan myLocation (jika live) ATAU localPos (jika offline)
+  const displayLocation = myLocation || localPos;
+
+  // Koordinat default (Mataram) jika GPS belum merespons
   const defaultCenter = [-8.5833, 116.1167];
 
-  // Penentuan titik pusat awal
-  const mapCenter = myLocation
-    ? [myLocation.latitude, myLocation.longitude]
+  const mapCenter = displayLocation
+    ? [displayLocation.latitude, displayLocation.longitude]
     : partnerLocation
       ? [partnerLocation.latitude, partnerLocation.longitude]
       : defaultCenter;
 
   return (
     <div className="space-y-4 animate-in fade-in duration-500 pt-2 h-[80vh] flex flex-col">
-      {/* Header Map */}
       <div className="bg-white p-5 rounded-3xl shadow-sm border border-blue-100 flex flex-col gap-1 shrink-0">
         <h1 className="text-2xl font-extrabold text-blue-950">Peta Lokasi</h1>
         <p className="text-sm text-blue-800 font-medium">
@@ -84,9 +104,7 @@ export default function MapPage() {
         </p>
       </div>
 
-      {/* Kontainer Peta: Ditambahkan min-h-[50vh] agar peta tidak menyusut menjadi 0 piksel */}
       <div className="flex-1 min-h-[50vh] relative rounded-3xl overflow-hidden shadow-sm border border-blue-100 z-0">
-        {/* Floating Action Bar */}
         <div className="absolute top-4 left-4 right-4 z-[400] flex justify-between items-center gap-2">
           <div className="bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-lg border border-blue-50">
             <p className="text-sm font-bold text-blue-950">
@@ -112,7 +130,6 @@ export default function MapPage() {
           </button>
         </div>
 
-        {/* Komponen Peta Leaflet */}
         <MapContainer
           center={mapCenter}
           zoom={13}
@@ -124,11 +141,13 @@ export default function MapPage() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
-          <RecenterMap location={myLocation} />
+          {/* Kamera akan otomatis terbang ke displayLocation */}
+          <RecenterMap location={displayLocation} />
 
-          {myLocation && (
+          {/* Marker Diri Sendiri akan selalu muncul meskipun Offline */}
+          {displayLocation && (
             <Marker
-              position={[myLocation.latitude, myLocation.longitude]}
+              position={[displayLocation.latitude, displayLocation.longitude]}
               icon={myIcon}
             >
               <Popup className="rounded-xl border-0 shadow-xl">
@@ -137,17 +156,18 @@ export default function MapPage() {
                     {profile?.nama || "Anda"}
                   </p>
                   <p className="text-xs text-blue-800 font-medium">
-                    Akurasi: ±{Math.round(myLocation.accuracy)}m
+                    Akurasi: ±{Math.round(displayLocation.accuracy)}m
                   </p>
                   <p className="text-xs text-blue-800/70 mt-1">
                     Update:{" "}
-                    {new Date(myLocation.updated_at).toLocaleTimeString()}
+                    {new Date(displayLocation.updated_at).toLocaleTimeString()}
                   </p>
                 </div>
               </Popup>
             </Marker>
           )}
 
+          {/* Marker Pasangan */}
           {partnerLocation && (
             <Marker
               position={[partnerLocation.latitude, partnerLocation.longitude]}
