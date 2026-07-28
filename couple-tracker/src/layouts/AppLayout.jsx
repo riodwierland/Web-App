@@ -11,6 +11,9 @@ import { cn } from "../utils/cn";
 
 export default function AppLayout() {
   const { user } = useAuth();
+  const location = useLocation();
+
+  const isActive = (path) => location.pathname === path;
 
   if (!user) return <Navigate to="/login" replace />;
 
