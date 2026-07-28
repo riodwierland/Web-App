@@ -143,9 +143,7 @@ export default function Profile() {
                 type="text"
                 placeholder="MISAL: AB12CD"
                 value={partnerCodeInput}
-                onChange={(e) =>
-                  setPartnerCodeInput(e.target.value.toUpperCase())
-                }
+                onChange={(e) => setPartnerCodeInput(e.target.value)}
                 maxLength={6}
                 className="w-full bg-white border-2 border-blue-50 text-blue-950 placeholder:text-blue-300 rounded-2xl pl-11 pr-4 py-3.5 font-mono font-bold tracking-widest focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all"
               />
