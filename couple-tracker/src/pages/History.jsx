@@ -84,7 +84,7 @@ export default function History() {
           {history.map((loc) => (
             <div key={loc.id} className="relative pl-7 group">
               {/* Timeline Dot */}
-              <div className="absolute -left-[11px] top-1.5 w-5 h-5 bg-zinc-50 border-[5px] border-indigo-500 rounded-full group-hover:scale-110 transition-transform"></div>
+              <div className="absolute -left-11px top-1.5 w-5 h-5 bg-zinc-50 border-[5px] border-indigo-500 rounded-full group-hover:scale-110 transition-transform"></div>
 
               <div className="bg-white p-5 rounded-3xl border border-zinc-100 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center gap-2 text-sm font-bold text-zinc-900 mb-3">

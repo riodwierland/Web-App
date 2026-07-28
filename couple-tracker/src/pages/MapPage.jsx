@@ -105,7 +105,7 @@ export default function MapPage() {
       </div>
 
       <div className="flex-1 min-h-[50vh] relative rounded-3xl overflow-hidden shadow-sm border border-blue-100 z-0">
-        <div className="absolute top-4 left-4 right-4 z-[400] flex justify-between items-center gap-2">
+        <div className="absolute top-4 left-4 right-4 z-400 flex justify-between items-center gap-2">
           <div className="bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-lg border border-blue-50">
             <p className="text-sm font-bold text-blue-950">
               Status:{" "}
