@@ -26,7 +26,7 @@ export default function AppLayout() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-dark-bg pb-20">
+    <div className="min-h-screen bg-slate-50 font-sans pb-24 selection:bg-blue-200">
       {/* Konten Utama */}
       <main className="container mx-auto max-w-md p-4 animate-in fade-in duration-300">
         <Outlet />
