@@ -67,7 +67,7 @@ export default function Dashboard() {
 
           <Button
             variant="secondary"
-            className="w-auto px-6 py-2 rounded-full text-sm font-bold"
+            className="w-full bg-slate-800 text-white font-semibold py-3.5 px-6 rounded-2xl hover:bg-slate-700 transition-all"
             onClick={() => navigate("/profile")}
           >
             {isConnected ? "Lihat Profil Pasangan" : "Hubungkan Sekarang"}

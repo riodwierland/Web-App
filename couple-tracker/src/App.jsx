@@ -13,7 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 
 // 2. MapPage masih menggunakan placeholder karena belum kita buat di Tahap 5
-import { MapPage } from "./pages/Placeholders";
+import MapPage from "./pages/MapPage";
 
 function App() {
   return (

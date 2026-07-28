@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import "leaflet/dist/leaflet.css"; // BARIS WAJIB UNTUK MENCEGAH PETA PUTIH
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import { Navigation } from "lucide-react";
@@ -47,6 +48,11 @@ const RecenterMap = ({ location }) => {
   useEffect(() => {
     if (location) {
       map.flyTo([location.latitude, location.longitude], 16, { animate: true });
+
+      // Trik untuk memaksa peta melakukan render ulang jika ukuran kontainer berubah
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 100);
     }
   }, [location, map]);
   return null;
@@ -78,11 +84,10 @@ export default function MapPage() {
         </p>
       </div>
 
-      {/* Kontainer Peta (Dengan perbaikan ukuran tinggi menggunakan flex-1) */}
-      <div className="flex-1 relative rounded-3xl overflow-hidden shadow-sm border border-blue-100 z-0">
-        {/* Floating Action Bar (Menimpa di atas peta) */}
+      {/* Kontainer Peta: Ditambahkan min-h-[50vh] agar peta tidak menyusut menjadi 0 piksel */}
+      <div className="flex-1 min-h-[50vh] relative rounded-3xl overflow-hidden shadow-sm border border-blue-100 z-0">
+        {/* Floating Action Bar */}
         <div className="absolute top-4 left-4 right-4 z-[400] flex justify-between items-center gap-2">
-          {/* Indikator Status (Teks Biru Gelap) */}
           <div className="bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-lg border border-blue-50">
             <p className="text-sm font-bold text-blue-950">
               Status:{" "}
@@ -94,7 +99,6 @@ export default function MapPage() {
             </p>
           </div>
 
-          {/* Tombol Aksi */}
           <button
             onClick={toggleSharing}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold shadow-lg transition-all active:scale-95 ${
@@ -120,16 +124,13 @@ export default function MapPage() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
-          {/* Helper untuk fokus kamera */}
           <RecenterMap location={myLocation} />
 
-          {/* Marker Diri Sendiri (Anda) */}
           {myLocation && (
             <Marker
               position={[myLocation.latitude, myLocation.longitude]}
               icon={myIcon}
             >
-              {/* Teks di dalam Popup diubah menjadi biru gelap (blue-950 dan blue-800) */}
               <Popup className="rounded-xl border-0 shadow-xl">
                 <div className="text-center font-sans p-1">
                   <p className="font-extrabold text-blue-950 mb-1">
@@ -147,7 +148,6 @@ export default function MapPage() {
             </Marker>
           )}
 
-          {/* Marker Pasangan */}
           {partnerLocation && (
             <Marker
               position={[partnerLocation.latitude, partnerLocation.longitude]}
