@@ -1,11 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
-import { Navigation, Focus } from "lucide-react";
+import { Navigation } from "lucide-react";
 import { useLocations } from "../hooks/useLocations";
 import { useAuth } from "../contexts/AuthContext";
 import { usePartner } from "../hooks/usePartner";
-import Button from "../components/ui/Button";
 
 // Fix untuk masalah ikon default Leaflet di React
 delete L.Icon.Default.prototype._getIconUrl;
@@ -18,7 +17,7 @@ L.Icon.Default.mergeOptions({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-// Ikon kustom untuk membedakan marker
+// Ikon kustom untuk membedakan marker Anda (Biru)
 const myIcon = new L.Icon({
   iconUrl:
     "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
@@ -30,6 +29,7 @@ const myIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
+// Ikon kustom untuk Pasangan (Merah)
 const partnerIcon = new L.Icon({
   iconUrl:
     "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
@@ -41,7 +41,7 @@ const partnerIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-// Komponen helper untuk menggeser peta secara dinamis
+// Komponen helper untuk menggeser peta secara dinamis ke lokasi Anda
 const RecenterMap = ({ location }) => {
   const map = useMap();
   useEffect(() => {
@@ -58,7 +58,7 @@ export default function MapPage() {
   const { myLocation, partnerLocation, isSharing, toggleSharing } =
     useLocations();
 
-  // Koordinat default: Mataram, NTB
+  // Koordinat default Mataram NTB
   const defaultCenter = [-8.5833, 116.1167];
 
   // Penentuan titik pusat awal
@@ -69,88 +69,109 @@ export default function MapPage() {
       : defaultCenter;
 
   return (
-    <div className="relative h-[calc(100vh-100px)] rounded-3xl overflow-hidden shadow-xl border border-gray-200 dark:border-dark-border z-0">
-      {/* Floating Action Bar */}
-      <div className="absolute top-4 left-4 right-4 z-400 flex justify-between items-center gap-2">
-        <div className="bg-white/90 dark:bg-dark-card/90 backdrop-blur-md px-4 py-2 rounded-2xl shadow-lg border border-white/20">
-          <p className="text-sm font-bold text-gray-900 dark:text-white">
-            Status:{" "}
-            {isSharing ? (
-              <span className="text-blue-500">Live 📡</span>
-            ) : (
-              <span className="text-gray-500">Offline</span>
-            )}
-          </p>
-        </div>
-
-        <Button
-          onClick={toggleSharing}
-          variant={isSharing ? "danger" : "primary"}
-          className="w-auto px-4 py-2 rounded-2xl text-sm"
-        >
-          <Navigation size={18} />
-          {isSharing ? "Hentikan GPS" : "Mulai Bagikan"}
-        </Button>
+    <div className="space-y-4 animate-in fade-in duration-500 pt-2 h-[80vh] flex flex-col">
+      {/* Header Map */}
+      <div className="bg-white p-5 rounded-3xl shadow-sm border border-blue-100 flex flex-col gap-1 shrink-0">
+        <h1 className="text-2xl font-extrabold text-blue-950">Peta Lokasi</h1>
+        <p className="text-sm text-blue-800 font-medium">
+          Pantau lokasi Anda dan pasangan secara real-time
+        </p>
       </div>
 
-      {/* Komponen Peta Leaflet */}
-      <MapContainer
-        center={mapCenter}
-        zoom={13}
-        style={{ height: "100%", width: "100%" }}
-        zoomControl={false}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+      {/* Kontainer Peta (Dengan perbaikan ukuran tinggi menggunakan flex-1) */}
+      <div className="flex-1 relative rounded-3xl overflow-hidden shadow-sm border border-blue-100 z-0">
+        {/* Floating Action Bar (Menimpa di atas peta) */}
+        <div className="absolute top-4 left-4 right-4 z-[400] flex justify-between items-center gap-2">
+          {/* Indikator Status (Teks Biru Gelap) */}
+          <div className="bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-lg border border-blue-50">
+            <p className="text-sm font-bold text-blue-950">
+              Status:{" "}
+              {isSharing ? (
+                <span className="text-emerald-600">Live 📡</span>
+              ) : (
+                <span className="text-blue-950/50">Offline</span>
+              )}
+            </p>
+          </div>
 
-        {/* Helper untuk fokus kamera */}
-        <RecenterMap location={myLocation} />
-
-        {/* Marker Diri Sendiri */}
-        {myLocation && (
-          <Marker
-            position={[myLocation.latitude, myLocation.longitude]}
-            icon={myIcon}
+          {/* Tombol Aksi */}
+          <button
+            onClick={toggleSharing}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold shadow-lg transition-all active:scale-95 ${
+              isSharing
+                ? "bg-red-500 hover:bg-red-600 text-white shadow-red-200"
+                : "bg-blue-600 hover:bg-blue-700 text-white shadow-blue-200"
+            }`}
           >
-            <Popup className="rounded-xl">
-              <div className="text-center font-sans">
-                <p className="font-bold text-blue-600 mb-1">
-                  {profile?.nama} (Anda)
-                </p>
-                <p className="text-xs text-gray-500">
-                  Akurasi: ±{Math.round(myLocation.accuracy)}m
-                </p>
-                <p className="text-xs text-gray-500">
-                  Update: {new Date(myLocation.updated_at).toLocaleTimeString()}
-                </p>
-              </div>
-            </Popup>
-          </Marker>
-        )}
+            <Navigation size={18} />
+            {isSharing ? "Hentikan GPS" : "Mulai Bagikan"}
+          </button>
+        </div>
 
-        {/* Marker Pasangan */}
-        {partnerLocation && (
-          <Marker
-            position={[partnerLocation.latitude, partnerLocation.longitude]}
-            icon={partnerIcon}
-          >
-            <Popup>
-              <div className="text-center font-sans">
-                <p className="font-bold text-red-600 mb-1">{partner?.nama}</p>
-                <p className="text-xs text-gray-500">
-                  Status: {partnerLocation.is_online ? "Live 🟢" : "Offline ⚪"}
-                </p>
-                <p className="text-xs text-gray-500">
-                  Update:{" "}
-                  {new Date(partnerLocation.updated_at).toLocaleTimeString()}
-                </p>
-              </div>
-            </Popup>
-          </Marker>
-        )}
-      </MapContainer>
+        {/* Komponen Peta Leaflet */}
+        <MapContainer
+          center={mapCenter}
+          zoom={13}
+          style={{ height: "100%", width: "100%", zIndex: 1 }}
+          zoomControl={false}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+
+          {/* Helper untuk fokus kamera */}
+          <RecenterMap location={myLocation} />
+
+          {/* Marker Diri Sendiri (Anda) */}
+          {myLocation && (
+            <Marker
+              position={[myLocation.latitude, myLocation.longitude]}
+              icon={myIcon}
+            >
+              {/* Teks di dalam Popup diubah menjadi biru gelap (blue-950 dan blue-800) */}
+              <Popup className="rounded-xl border-0 shadow-xl">
+                <div className="text-center font-sans p-1">
+                  <p className="font-extrabold text-blue-950 mb-1">
+                    {profile?.nama || "Anda"}
+                  </p>
+                  <p className="text-xs text-blue-800 font-medium">
+                    Akurasi: ±{Math.round(myLocation.accuracy)}m
+                  </p>
+                  <p className="text-xs text-blue-800/70 mt-1">
+                    Update:{" "}
+                    {new Date(myLocation.updated_at).toLocaleTimeString()}
+                  </p>
+                </div>
+              </Popup>
+            </Marker>
+          )}
+
+          {/* Marker Pasangan */}
+          {partnerLocation && (
+            <Marker
+              position={[partnerLocation.latitude, partnerLocation.longitude]}
+              icon={partnerIcon}
+            >
+              <Popup className="rounded-xl border-0 shadow-xl">
+                <div className="text-center font-sans p-1">
+                  <p className="font-extrabold text-red-600 mb-1">
+                    {partner?.nama || "Pasangan"}
+                  </p>
+                  <p className="text-xs text-blue-800 font-medium">
+                    Status:{" "}
+                    {partnerLocation.is_online ? "Live 🟢" : "Offline ⚪"}
+                  </p>
+                  <p className="text-xs text-blue-800/70 mt-1">
+                    Update:{" "}
+                    {new Date(partnerLocation.updated_at).toLocaleTimeString()}
+                  </p>
+                </div>
+              </Popup>
+            </Marker>
+          )}
+        </MapContainer>
+      </div>
     </div>
   );
 }

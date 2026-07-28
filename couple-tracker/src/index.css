@@ -4,3 +4,23 @@ body {
   margin: 0;
   font-family: Inter, sans-serif;
 }
+
+.dark\:text-white,
+.text-gray-900,
+.dark\:text-gray-200 {
+  color: #172554 !important; /* Warna Biru Gelap Pekat (Blue-950) */
+}
+
+.dark\:text-gray-400,
+.text-gray-500 {
+  color: #1e40af !important; /* Warna Biru Medium untuk teks deskripsi */
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+span {
+  color: #172554;
+}
