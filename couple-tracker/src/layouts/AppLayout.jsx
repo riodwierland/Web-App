@@ -7,8 +7,6 @@ import {
   Settings as SettingsIcon,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
-// Menghapus import { cn } dari baris sebelumnya jika tidak digunakan, jika digunakan biarkan saja.
-// Saya tidak menyertakannya karena di kode Anda yang lama tidak ada pemanggilan fungsi cn()
 
 export default function AppLayout() {
   const { user } = useAuth();
@@ -19,19 +17,18 @@ export default function AppLayout() {
   if (!user) return <Navigate to="/login" replace />;
 
   return (
-    /* Latar Belakang Global Diubah Menjadi Gradien Biru-Slate yang Elegan */
-    <div className="min-h-screen bg-linear-to-br from-blue-50 via-slate-100 to-indigo-50 font-sans pb-28 selection:bg-blue-200">
-      {/* Konten Utama */}
+    /* BACKGROUND GLOBAL: 100% Biru Langit, bebas dari warna putih/slate */
+    <div className="min-h-screen bg-linear-to-br from-sky-200 via-sky-100 to-sky-200 font-sans pb-28 selection:bg-sky-300">
       <main className="container mx-auto max-w-md p-4 sm:p-6 animate-in fade-in duration-300">
         <Outlet />
       </main>
 
-      {/* Bottom Navigation */}
+      {/* Bottom Navigation: Kontainer diubah ke sky-50 (bukan white) */}
       <nav className="fixed bottom-0 left-0 right-0 p-4 md:p-6 flex justify-center z-50 pointer-events-none">
-        <div className="bg-white/90 backdrop-blur-md px-6 py-3.5 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-blue-100/60 flex items-center gap-6 sm:gap-8 pointer-events-auto">
+        <div className="bg-sky-50/95 backdrop-blur-md px-6 py-3.5 rounded-full shadow-[0_8px_30px_rgba(14,165,233,0.2)] border border-sky-200 flex items-center gap-6 sm:gap-8 pointer-events-auto">
           <Link
             to="/dashboard"
-            className={`flex flex-col items-center gap-1 transition-all duration-200 ${isActive("/dashboard") || isActive("/") ? "text-blue-600 scale-110 font-bold" : "text-slate-400 hover:text-slate-600"}`}
+            className={`flex flex-col items-center gap-1 transition-all duration-200 ${isActive("/dashboard") || isActive("/") ? "text-blue-600 scale-110 font-bold" : "text-sky-600/60 hover:text-sky-600"}`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -56,7 +53,7 @@ export default function AppLayout() {
 
           <Link
             to="/map"
-            className={`flex flex-col items-center gap-1 transition-all duration-200 ${isActive("/map") ? "text-blue-600 scale-110 font-bold" : "text-slate-400 hover:text-slate-600"}`}
+            className={`flex flex-col items-center gap-1 transition-all duration-200 ${isActive("/map") ? "text-blue-600 scale-110 font-bold" : "text-sky-600/60 hover:text-sky-600"}`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -78,7 +75,7 @@ export default function AppLayout() {
 
           <Link
             to="/history"
-            className={`flex flex-col items-center gap-1 transition-all duration-200 ${isActive("/history") ? "text-blue-600 scale-110 font-bold" : "text-slate-400 hover:text-slate-600"}`}
+            className={`flex flex-col items-center gap-1 transition-all duration-200 ${isActive("/history") ? "text-blue-600 scale-110 font-bold" : "text-sky-600/60 hover:text-sky-600"}`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -99,7 +96,7 @@ export default function AppLayout() {
 
           <Link
             to="/profile"
-            className={`flex flex-col items-center gap-1 transition-all duration-200 ${isActive("/profile") ? "text-blue-600 scale-110 font-bold" : "text-slate-400 hover:text-slate-600"}`}
+            className={`flex flex-col items-center gap-1 transition-all duration-200 ${isActive("/profile") ? "text-blue-600 scale-110 font-bold" : "text-sky-600/60 hover:text-sky-600"}`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -120,7 +117,7 @@ export default function AppLayout() {
 
           <Link
             to="/settings"
-            className={`flex flex-col items-center gap-1 transition-all duration-200 ${isActive("/settings") ? "text-blue-600 scale-110 font-bold" : "text-slate-400 hover:text-slate-600"}`}
+            className={`flex flex-col items-center gap-1 transition-all duration-200 ${isActive("/settings") ? "text-blue-600 scale-110 font-bold" : "text-sky-600/60 hover:text-sky-600"}`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

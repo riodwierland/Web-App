@@ -4,17 +4,15 @@ import { usePartner } from "../hooks/usePartner";
 
 export default function Dashboard() {
   const { profile } = useAuth();
-  const { partner, isLoadingPartner } = usePartner();
-
-  // Status koneksi
+  const { partner } = usePartner();
   const isConnected = !!partner;
 
   return (
     <div className="flex flex-col gap-5 pt-2 animate-in fade-in duration-500">
-      {/* 1. Kartu Header Profile */}
-      <div className="bg-white p-5 rounded-3xl shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] border border-blue-50 flex items-center justify-between">
+      {/* 1. Kartu Header Profile -> sky-50 */}
+      <div className="bg-sky-50 p-5 rounded-3xl shadow-[0_4px_20px_-10px_rgba(14,165,233,0.2)] border border-sky-100 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-blue-100 text-blue-700 rounded-2xl flex items-center justify-center font-extrabold text-xl shadow-inner">
+          <div className="w-12 h-12 bg-sky-200 text-blue-800 rounded-2xl flex items-center justify-center font-extrabold text-xl shadow-inner border border-sky-300">
             {profile?.nama?.charAt(0).toUpperCase() || "U"}
           </div>
           <div>
@@ -26,7 +24,7 @@ export default function Dashboard() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
               </span>
-              <span className="text-xs text-blue-800/70 font-semibold tracking-wide">
+              <span className="text-xs text-sky-700 font-semibold tracking-wide">
                 Online
               </span>
             </div>
@@ -34,14 +32,14 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* 2. Kartu Utama (Status Pasangan) */}
-      <div className="bg-white rounded-3xl p-7 shadow-[0_8px_30px_-10px_rgba(37,99,235,0.1)] border border-blue-100 flex flex-col items-center text-center mt-2 relative overflow-hidden">
-        {/* Dekorasi Latar Belakang Halus */}
-        <div className="absolute top-0 right-0 -mr-12 -mt-12 w-32 h-32 rounded-full bg-blue-50/60 blur-2xl pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 -ml-12 -mb-12 w-32 h-32 rounded-full bg-indigo-50/60 blur-2xl pointer-events-none"></div>
+      {/* 2. Kartu Utama -> sky-50 */}
+      <div className="bg-sky-50 rounded-3xl p-7 shadow-[0_8px_30px_-10px_rgba(14,165,233,0.2)] border border-sky-200 flex flex-col items-center text-center mt-2 relative overflow-hidden">
+        {/* Dekorasi Card */}
+        <div className="absolute top-0 right-0 -mr-12 -mt-12 w-32 h-32 rounded-full bg-sky-200/50 blur-2xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 -ml-12 -mb-12 w-32 h-32 rounded-full bg-sky-200/50 blur-2xl pointer-events-none"></div>
 
         <div className="relative z-10 w-full">
-          <span className="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
+          <span className="inline-block px-3 py-1 bg-sky-100 text-sky-700 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border border-sky-200">
             Status Pasangan
           </span>
 
@@ -57,20 +55,20 @@ export default function Dashboard() {
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className={isConnected ? "text-red-500" : "text-blue-200"}
+              className={isConnected ? "text-red-500" : "text-sky-300"}
             >
               <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
             </svg>
           </h2>
 
-          <p className="text-sm text-blue-800/80 leading-relaxed px-2 mb-8 font-medium">
+          <p className="text-sm text-sky-800 leading-relaxed px-2 mb-8 font-medium">
             {isConnected
               ? `Anda sedang berbagi lokasi dengan ${partner.nama}.`
               : "Bagikan kode unik Anda atau masukkan kode pasangan untuk mulai berbagi lokasi."}
           </p>
 
-          {/* PERBAIKAN TOMBOL: Menggunakan bg-blue-600 dan text-white */}
-          <button className="w-full bg-blue-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg shadow-blue-200 hover:bg-blue-700 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 active:scale-95 flex items-center justify-center gap-2">
+          {/* Tombol dibiarkan biru terang sesuai pesanan */}
+          <button className="w-full bg-blue-600 text-sky-50 font-bold py-3.5 px-6 rounded-2xl shadow-lg shadow-blue-300 hover:bg-blue-700 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 active:scale-95 flex items-center justify-center gap-2">
             {!isConnected && (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -92,13 +90,13 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* 3. Grid Tombol Jalan Pintas (Peta & Riwayat) */}
+      {/* 3. Grid Tombol Jalan Pintas -> sky-50 */}
       <div className="grid grid-cols-2 gap-4 mt-2">
         <Link
           to="/map"
-          className="bg-white p-5 rounded-3xl shadow-[0_4px_15px_-5px_rgba(0,0,0,0.05)] border border-blue-50 flex flex-col items-center justify-center gap-3 hover:bg-blue-50/50 hover:border-blue-100 transition-colors group"
+          className="bg-sky-50 p-5 rounded-3xl shadow-[0_4px_15px_-5px_rgba(14,165,233,0.15)] border border-sky-100 flex flex-col items-center justify-center gap-3 hover:bg-sky-100 hover:border-sky-300 transition-colors group"
         >
-          <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+          <div className="w-12 h-12 rounded-full bg-sky-200 text-blue-700 flex items-center justify-center group-hover:scale-110 transition-transform shadow-inner">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -119,9 +117,9 @@ export default function Dashboard() {
 
         <Link
           to="/history"
-          className="bg-white p-5 rounded-3xl shadow-[0_4px_15px_-5px_rgba(0,0,0,0.05)] border border-blue-50 flex flex-col items-center justify-center gap-3 hover:bg-purple-50/50 hover:border-purple-100 transition-colors group"
+          className="bg-sky-50 p-5 rounded-3xl shadow-[0_4px_15px_-5px_rgba(14,165,233,0.15)] border border-sky-100 flex flex-col items-center justify-center gap-3 hover:bg-sky-100 hover:border-sky-300 transition-colors group"
         >
-          <div className="w-12 h-12 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+          <div className="w-12 h-12 rounded-full bg-sky-200 text-blue-700 flex items-center justify-center group-hover:scale-110 transition-transform shadow-inner">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"

@@ -7,7 +7,6 @@ import { useLocations } from "../hooks/useLocations";
 import { useAuth } from "../contexts/AuthContext";
 import { usePartner } from "../hooks/usePartner";
 
-// Fix untuk masalah ikon default Leaflet di React
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -18,7 +17,6 @@ L.Icon.Default.mergeOptions({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-// Ikon kustom untuk membedakan marker Anda (Biru)
 const myIcon = new L.Icon({
   iconUrl:
     "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
@@ -30,7 +28,6 @@ const myIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-// Ikon kustom untuk Pasangan (Merah)
 const partnerIcon = new L.Icon({
   iconUrl:
     "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
@@ -42,7 +39,6 @@ const partnerIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-// Komponen helper untuk menggeser peta secara dinamis
 const RecenterMap = ({ location }) => {
   const map = useMap();
   useEffect(() => {
@@ -62,11 +58,9 @@ export default function MapPage() {
   const { myLocation, partnerLocation, isSharing, toggleSharing } =
     useLocations();
 
-  // STATE BARU: Menyimpan lokasi sementara saat baru membuka peta
   const [localPos, setLocalPos] = useState(null);
 
   useEffect(() => {
-    // Meminta izin dan melacak lokasi Anda SEGERA saat halaman dibuka
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -83,10 +77,7 @@ export default function MapPage() {
     }
   }, []);
 
-  // LOGIKA BARU: Gunakan myLocation (jika live) ATAU localPos (jika offline)
   const displayLocation = myLocation || localPos;
-
-  // Koordinat default (Mataram) jika GPS belum merespons
   const defaultCenter = [-8.5833, 116.1167];
 
   const mapCenter = displayLocation
@@ -97,22 +88,25 @@ export default function MapPage() {
 
   return (
     <div className="space-y-4 animate-in fade-in duration-500 pt-2 h-[80vh] flex flex-col">
-      <div className="bg-white p-5 rounded-3xl shadow-sm border border-blue-100 flex flex-col gap-1 shrink-0">
+      {/* Header Map -> sky-50 */}
+      <div className="bg-sky-50 p-5 rounded-3xl shadow-[0_4px_20px_rgba(14,165,233,0.15)] border border-sky-200 flex flex-col gap-1 shrink-0">
         <h1 className="text-2xl font-extrabold text-blue-950">Peta Lokasi</h1>
-        <p className="text-sm text-blue-800 font-medium">
+        <p className="text-sm text-sky-700 font-semibold">
           Pantau lokasi Anda dan pasangan secara real-time
         </p>
       </div>
 
-      <div className="flex-1 min-h-[50vh] relative rounded-3xl overflow-hidden shadow-sm border border-blue-100 z-0">
+      {/* Kontainer Peta -> border diubah ke sky-300 */}
+      <div className="flex-1 min-h-[50vh] relative rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(14,165,233,0.2)] border-2 border-sky-200 z-0 bg-sky-100">
         <div className="absolute top-4 left-4 right-4 z-400 flex justify-between items-center gap-2">
-          <div className="bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-lg border border-blue-50">
+          {/* Indikator Status -> sky-50 */}
+          <div className="bg-sky-50/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-lg border border-sky-200">
             <p className="text-sm font-bold text-blue-950">
               Status:{" "}
               {isSharing ? (
                 <span className="text-emerald-600">Live 📡</span>
               ) : (
-                <span className="text-blue-950/50">Offline</span>
+                <span className="text-sky-700/80">Offline</span>
               )}
             </p>
           </div>
@@ -122,7 +116,7 @@ export default function MapPage() {
             className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold shadow-lg transition-all active:scale-95 ${
               isSharing
                 ? "bg-red-500 hover:bg-red-600 text-white shadow-red-200"
-                : "bg-blue-600 hover:bg-blue-700 text-white shadow-blue-200"
+                : "bg-blue-600 hover:bg-blue-700 text-sky-50 shadow-blue-300"
             }`}
           >
             <Navigation size={18} />
@@ -141,10 +135,8 @@ export default function MapPage() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
-          {/* Kamera akan otomatis terbang ke displayLocation */}
           <RecenterMap location={displayLocation} />
 
-          {/* Marker Diri Sendiri akan selalu muncul meskipun Offline */}
           {displayLocation && (
             <Marker
               position={[displayLocation.latitude, displayLocation.longitude]}
@@ -155,19 +147,14 @@ export default function MapPage() {
                   <p className="font-extrabold text-blue-950 mb-1">
                     {profile?.nama || "Anda"}
                   </p>
-                  <p className="text-xs text-blue-800 font-medium">
+                  <p className="text-xs text-sky-700 font-medium">
                     Akurasi: ±{Math.round(displayLocation.accuracy)}m
-                  </p>
-                  <p className="text-xs text-blue-800/70 mt-1">
-                    Update:{" "}
-                    {new Date(displayLocation.updated_at).toLocaleTimeString()}
                   </p>
                 </div>
               </Popup>
             </Marker>
           )}
 
-          {/* Marker Pasangan */}
           {partnerLocation && (
             <Marker
               position={[partnerLocation.latitude, partnerLocation.longitude]}
@@ -178,13 +165,9 @@ export default function MapPage() {
                   <p className="font-extrabold text-red-600 mb-1">
                     {partner?.nama || "Pasangan"}
                   </p>
-                  <p className="text-xs text-blue-800 font-medium">
+                  <p className="text-xs text-sky-700 font-medium">
                     Status:{" "}
                     {partnerLocation.is_online ? "Live 🟢" : "Offline ⚪"}
-                  </p>
-                  <p className="text-xs text-blue-800/70 mt-1">
-                    Update:{" "}
-                    {new Date(partnerLocation.updated_at).toLocaleTimeString()}
                   </p>
                 </div>
               </Popup>
