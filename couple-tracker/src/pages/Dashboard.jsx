@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MapPin, Heart, Share2 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import Button from "../components/ui/Button";
