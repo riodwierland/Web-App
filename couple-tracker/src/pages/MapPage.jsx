@@ -57,7 +57,6 @@ export default function MapPage() {
   const { partner } = usePartner();
   const { myLocation, partnerLocation, isSharing, toggleSharing } =
     useLocations();
-
   const [localPos, setLocalPos] = useState(null);
 
   useEffect(() => {
@@ -88,25 +87,31 @@ export default function MapPage() {
 
   return (
     <div className="space-y-4 animate-in fade-in duration-500 pt-2 h-[80vh] flex flex-col">
-      {/* Header Map -> sky-50 */}
-      <div className="bg-sky-50 p-5 rounded-3xl shadow-[0_4px_20px_rgba(14,165,233,0.15)] border border-sky-200 flex flex-col gap-1 shrink-0">
-        <h1 className="text-2xl font-extrabold text-blue-950">Peta Lokasi</h1>
-        <p className="text-sm text-sky-700 font-semibold">
+      {/* Header Map */}
+      <div className="bg-sky-50 dark:bg-slate-900 p-5 rounded-3xl shadow-[0_4px_20px_rgba(14,165,233,0.15)] dark:shadow-none border border-sky-200 dark:border-slate-800 flex flex-col gap-1 shrink-0 transition-colors duration-300">
+        <h1 className="text-2xl font-extrabold text-blue-950 dark:text-sky-50">
+          Peta Lokasi
+        </h1>
+        <p className="text-sm text-sky-700 dark:text-slate-400 font-semibold">
           Pantau lokasi Anda dan pasangan secara real-time
         </p>
       </div>
 
-      {/* Kontainer Peta -> border diubah ke sky-300 */}
-      <div className="flex-1 min-h-[50vh] relative rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(14,165,233,0.2)] border-2 border-sky-200 z-0 bg-sky-100">
+      {/* Kontainer Peta */}
+      <div className="flex-1 min-h-[50vh] relative rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(14,165,233,0.2)] dark:shadow-none border-2 border-sky-200 dark:border-slate-800 z-0 bg-sky-100 dark:bg-slate-900 transition-colors duration-300">
         <div className="absolute top-4 left-4 right-4 z-400 flex justify-between items-center gap-2">
-          {/* Indikator Status -> sky-50 */}
-          <div className="bg-sky-50/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-lg border border-sky-200">
-            <p className="text-sm font-bold text-blue-950">
+          {/* Indikator Status */}
+          <div className="bg-sky-50/95 dark:bg-slate-900/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-lg border border-sky-200 dark:border-slate-700 transition-colors duration-300">
+            <p className="text-sm font-bold text-blue-950 dark:text-sky-50">
               Status:{" "}
               {isSharing ? (
-                <span className="text-emerald-600">Live 📡</span>
+                <span className="text-emerald-600 dark:text-emerald-400">
+                  Live 📡
+                </span>
               ) : (
-                <span className="text-sky-700/80">Offline</span>
+                <span className="text-sky-700/80 dark:text-slate-500">
+                  Offline
+                </span>
               )}
             </p>
           </div>
@@ -115,8 +120,8 @@ export default function MapPage() {
             onClick={toggleSharing}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold shadow-lg transition-all active:scale-95 ${
               isSharing
-                ? "bg-red-500 hover:bg-red-600 text-white shadow-red-200"
-                : "bg-blue-600 hover:bg-blue-700 text-sky-50 shadow-blue-300"
+                ? "bg-red-500 hover:bg-red-600 text-white shadow-red-200 dark:shadow-none"
+                : "bg-blue-600 hover:bg-blue-700 text-sky-50 shadow-blue-300 dark:shadow-none"
             }`}
           >
             <Navigation size={18} />

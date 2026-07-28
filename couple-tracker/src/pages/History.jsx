@@ -89,7 +89,7 @@ export default function History() {
           {history.map((loc) => (
             <div key={loc.id} className="relative pl-7 group">
               {/* Timeline Dot */}
-              <div className="absolute -left-[11px] top-1.5 w-5 h-5 bg-sky-50 dark:bg-slate-950 border-[5px] border-blue-500 dark:border-blue-500 rounded-full group-hover:scale-110 transition-transform"></div>
+              <div className="absolute -left-11px top-1.5 w-5 h-5 bg-sky-50 dark:bg-slate-950 border-[5px] border-blue-500 dark:border-blue-500 rounded-full group-hover:scale-110 transition-transform"></div>
 
               {/* Kartu Riwayat Per Item */}
               <div className="bg-sky-50 dark:bg-slate-900 p-5 rounded-3xl border border-sky-100 dark:border-slate-800 shadow-[0_8px_30px_rgba(14,165,233,0.15)] dark:shadow-none hover:shadow-md transition-all duration-300">
