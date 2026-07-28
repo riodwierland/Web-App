@@ -17,7 +17,6 @@ export default function History() {
         return;
       }
 
-      // Ambil riwayat lokasi 24 jam terakhir
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
 
@@ -27,7 +26,7 @@ export default function History() {
         .eq("user_id", partner.id)
         .gte("created_at", yesterday.toISOString())
         .order("created_at", { ascending: false })
-        .limit(50); // Batasi 50 titik terakhir agar tidak berat
+        .limit(50);
 
       if (!error && data) {
         setHistory(data);
@@ -40,32 +39,31 @@ export default function History() {
 
   if (!partner) {
     return (
-      <div className="flex flex-col items-center justify-center h-[60vh] text-center px-4 animate-in fade-in">
-        <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-          <MapPin size={24} className="text-gray-400" />
+      <div className="flex flex-col items-center justify-center h-[60vh] text-center px-4 animate-in fade-in duration-500">
+        <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mb-5 shadow-inner">
+          <MapPin size={32} className="text-indigo-300" />
         </div>
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+        <h2 className="text-2xl font-extrabold text-zinc-900 mb-2">
           Belum Ada Pasangan
         </h2>
-        <p className="text-gray-500 text-sm">
-          Hubungkan pasangan Anda di menu Profil untuk melihat riwayat
-          lokasinya.
+        <p className="text-zinc-500 text-sm leading-relaxed max-w-xs">
+          Hubungkan pasangan Anda di menu Profil untuk mulai melihat riwayat
+          lokasinya di sini.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 pb-6 animate-in fade-in duration-300">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Riwayat Lokasi
-          </h1>
-          <p className="text-sm text-gray-500">
-            24 Jam Terakhir: {partner.nama}
-          </p>
-        </div>
+    <div className="space-y-6 pb-6 animate-in fade-in duration-500 pt-2">
+      <div className="bg-white p-5 rounded-3xl shadow-sm border border-zinc-100 mb-6 flex flex-col gap-1">
+        <h1 className="text-2xl font-extrabold text-zinc-900">
+          Riwayat Lokasi
+        </h1>
+        <p className="text-sm text-zinc-500 font-medium">
+          24 Jam Terakhir •{" "}
+          <span className="text-indigo-600 font-semibold">{partner.nama}</span>
+        </p>
       </div>
 
       {isLoading ? (
@@ -73,53 +71,63 @@ export default function History() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-24 bg-white dark:bg-dark-card rounded-2xl border border-gray-100 dark:border-dark-border"
+              className="h-28 bg-white rounded-3xl border border-zinc-100 shadow-sm"
             ></div>
           ))}
         </div>
       ) : history.length === 0 ? (
-        <div className="text-center text-gray-500 py-10 bg-white dark:bg-dark-card rounded-3xl border border-gray-100 dark:border-dark-border">
+        <div className="text-center text-zinc-500 py-12 bg-white rounded-3xl border border-zinc-100 shadow-sm text-sm font-medium">
           Belum ada data riwayat lokasi yang terekam.
         </div>
       ) : (
-        <div className="relative border-l-2 border-blue-100 dark:border-blue-900/30 ml-4 space-y-6">
+        <div className="relative border-l-2 border-indigo-100 ml-5 space-y-8 pb-8">
           {history.map((loc) => (
-            <div key={loc.id} className="relative pl-6">
+            <div key={loc.id} className="relative pl-7 group">
               {/* Timeline Dot */}
-              <div className="absolute -left-[9px] top-1 w-4 h-4 bg-white dark:bg-dark-bg border-4 border-blue-500 rounded-full"></div>
+              <div className="absolute -left-[11px] top-1.5 w-5 h-5 bg-zinc-50 border-[5px] border-indigo-500 rounded-full group-hover:scale-110 transition-transform"></div>
 
-              <div className="bg-white dark:bg-dark-card p-4 rounded-2xl border border-gray-100 dark:border-dark-border shadow-sm">
-                <div className="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                  <Clock size={16} className="text-blue-500" />
+              <div className="bg-white p-5 rounded-3xl border border-zinc-100 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center gap-2 text-sm font-bold text-zinc-900 mb-3">
+                  <Clock size={16} className="text-indigo-500" />
                   {format(new Date(loc.created_at), "HH:mm - dd MMM yyyy", {
                     locale: id,
                   })}
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 mt-3">
-                  <div className="bg-gray-50 dark:bg-gray-800/50 p-2 rounded-xl flex items-center gap-2">
-                    <Navigation size={14} className="text-gray-400" />
-                    <span className="text-xs text-gray-600 dark:text-gray-300">
+                <div className="grid grid-cols-2 gap-3 mt-3">
+                  <div className="bg-zinc-50 p-3 rounded-2xl flex flex-col gap-1 border border-zinc-100/50">
+                    <div className="flex items-center gap-1.5 text-zinc-400">
+                      <Navigation size={14} />
+                      <span className="text-[10px] uppercase tracking-wider font-bold">
+                        Kecepatan
+                      </span>
+                    </div>
+                    <span className="text-sm font-semibold text-zinc-700">
                       {loc.speed
-                        ? `${Math.round(loc.speed * 3.6)} km/jam`
+                        ? `${Math.round(loc.speed * 3.6)} km/j`
                         : "Diam"}
                     </span>
                   </div>
-                  <div className="bg-gray-50 dark:bg-gray-800/50 p-2 rounded-xl flex items-center gap-2">
-                    <MapPin size={14} className="text-gray-400" />
-                    <span className="text-xs text-gray-600 dark:text-gray-300">
-                      ±{Math.round(loc.accuracy)}m
+                  <div className="bg-zinc-50 p-3 rounded-2xl flex flex-col gap-1 border border-zinc-100/50">
+                    <div className="flex items-center gap-1.5 text-zinc-400">
+                      <MapPin size={14} />
+                      <span className="text-[10px] uppercase tracking-wider font-bold">
+                        Akurasi
+                      </span>
+                    </div>
+                    <span className="text-sm font-semibold text-zinc-700">
+                      ± {Math.round(loc.accuracy)} meter
                     </span>
                   </div>
                 </div>
 
-                {/* Link ke Google Maps untuk navigasi presisi */}
                 <a
                   href={`https://www.google.com/maps/search/?api=1&query=${loc.latitude},${loc.longitude}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-3 block text-center text-xs text-blue-600 dark:text-blue-400 font-medium hover:underline"
+                  className="mt-4 flex items-center justify-center gap-2 w-full py-2.5 bg-indigo-50 text-indigo-700 rounded-xl text-xs font-bold hover:bg-indigo-100 transition-colors"
                 >
+                  <MapPin size={14} />
                   Buka di Google Maps
                 </a>
               </div>
