@@ -44,20 +44,17 @@ export function useLocations() {
   // 2. Mulai/Berhenti Berbagi Lokasi
   const toggleSharing = () => {
     if (isSharing) {
-      // Hentikan sharing
       if (watchIdRef.current)
         navigator.geolocation.clearWatch(watchIdRef.current);
       setIsSharing(false);
 
-      // Update status is_online ke false di database
       supabase
         .from("locations")
-        .update({ is_online: false })
+        .update({ is_online: false, updated_at: new Date().toISOString() })
         .eq("user_id", user.id)
         .then();
       toast.info("Berbagi lokasi dihentikan");
     } else {
-      // Mulai sharing
       if (!navigator.geolocation) {
         return toast.error("Browser Anda tidak mendukung GPS");
       }
@@ -80,11 +77,28 @@ export function useLocations() {
     }
   };
 
-  // 3. Dengarkan Lokasi Pasangan secara Realtime
+  // 3. FITUR BARU: Heartbeat (Detak Jantung)
+  // Memastikan kita tetap "Live" di database walau sedang diam (tidak berpindah posisi)
+  useEffect(() => {
+    let heartbeatInterval;
+    if (isSharing && user) {
+      heartbeatInterval = setInterval(() => {
+        supabase
+          .from("locations")
+          .update({ updated_at: new Date().toISOString(), is_online: true })
+          .eq("user_id", user.id)
+          .then();
+      }, 20000); // Kirim sinyal setiap 20 detik
+    }
+    return () => {
+      if (heartbeatInterval) clearInterval(heartbeatInterval);
+    };
+  }, [isSharing, user]);
+
+  // 4. Dengarkan Lokasi Pasangan secara Realtime
   useEffect(() => {
     if (!partner) return;
 
-    // Ambil lokasi terakhir pasangan terlebih dahulu
     supabase
       .from("locations")
       .select("*")
@@ -94,7 +108,6 @@ export function useLocations() {
         if (data) setPartnerLocation(data);
       });
 
-    // Subscribe ke perubahan realtime
     const channel = supabase
       .channel("partner-tracking")
       .on(
@@ -116,32 +129,44 @@ export function useLocations() {
     };
   }, [partner]);
 
-  // 4. PERBAIKAN: Tangani Refresh / Tutup Aplikasi (Anti Ghost Status)
+  // 5. FITUR BARU: Auto-Offline (Penangkal Aplikasi Ditutup Paksa)
   useEffect(() => {
-    // Fungsi ini akan mengubah status menjadi offline
+    if (!partnerLocation || !partnerLocation.is_online) return;
+
+    const checkInterval = setInterval(() => {
+      const lastUpdate = new Date(partnerLocation.updated_at).getTime();
+      const now = new Date().getTime();
+      const diffInSeconds = (now - lastUpdate) / 1000;
+
+      // Jika pasangan tidak mengirim sinyal heartbeat lebih dari 40 detik, matikan paksa di layar!
+      if (diffInSeconds > 40) {
+        setPartnerLocation((prev) =>
+          prev ? { ...prev, is_online: false } : prev,
+        );
+      }
+    }, 5000); // Cek setiap 5 detik
+
+    return () => clearInterval(checkInterval);
+  }, [partnerLocation]);
+
+  // 6. Tangani Refresh Normal
+  useEffect(() => {
     const handleBeforeUnload = () => {
       if (isSharing && user) {
-        // Tembakkan perintah offline ke Supabase dengan sangat cepat
         supabase
           .from("locations")
-          .update({ is_online: false })
+          .update({ is_online: false, updated_at: new Date().toISOString() })
           .eq("user_id", user.id)
           .then();
       }
     };
 
-    // Dengarkan saat pengguna mau me-refresh halaman atau menutup tab
     window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
-
-      // Hentikan pelacakan GPS lokal
-      if (watchIdRef.current) {
+      if (watchIdRef.current)
         navigator.geolocation.clearWatch(watchIdRef.current);
-      }
-
-      // Jika komponen dibongkar (navigasi pindah halaman), matikan juga statusnya
       handleBeforeUnload();
     };
   }, [isSharing, user]);

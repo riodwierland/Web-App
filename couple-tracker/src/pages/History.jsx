@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { Clock, MapPin, Navigation } from "lucide-react";
+import { Clock, MapPin, Navigation, Trash2 } from "lucide-react"; // Menambahkan Trash2
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { supabase } from "../services/supabase";
 import { usePartner } from "../hooks/usePartner";
+import { toast } from "sonner"; // Untuk notifikasi sukses/gagal
 
 export default function History() {
   const { partner } = usePartner();
@@ -37,6 +38,29 @@ export default function History() {
     fetchHistory();
   }, [partner]);
 
+  // Fungsi untuk menghapus riwayat
+  const handleDeleteHistory = async () => {
+    // Tampilkan dialog konfirmasi bawaan browser
+    if (
+      window.confirm(
+        "Apakah Anda yakin ingin menghapus semua riwayat lokasi ini? Data yang dihapus tidak dapat dikembalikan.",
+      )
+    ) {
+      const { error } = await supabase
+        .from("location_history")
+        .delete()
+        .eq("user_id", partner.id); // Menghapus data pasangan yang sedang dilihat
+
+      if (error) {
+        toast.error("Terjadi kesalahan saat menghapus riwayat.");
+        console.error(error);
+      } else {
+        toast.success("Riwayat lokasi berhasil dihapus.");
+        setHistory([]); // Langsung kosongkan daftar di layar tanpa perlu refresh
+      }
+    }
+  };
+
   // Tampilan ketika belum ada pasangan
   if (!partner) {
     return (
@@ -44,7 +68,6 @@ export default function History() {
         <div className="w-20 h-20 bg-sky-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-5 shadow-inner border border-sky-200 dark:border-slate-700 transition-colors duration-300">
           <MapPin size={32} className="text-blue-500 dark:text-blue-400" />
         </div>
-        {/* PERBAIKAN: Menambahkan dark:text-sky-50 agar teks menjadi putih di mode gelap */}
         <h2 className="text-2xl font-extrabold text-blue-950 dark:text-sky-50 mb-2 transition-colors duration-300">
           Belum Ada Pasangan
         </h2>
@@ -58,17 +81,30 @@ export default function History() {
 
   return (
     <div className="space-y-6 pb-6 animate-in fade-in duration-500 pt-2">
-      {/* Kartu Header -> Disesuaikan dengan tema Biru Langit / Gelap */}
-      <div className="bg-sky-50 dark:bg-slate-900 p-5 rounded-3xl shadow-[0_8px_30px_rgba(14,165,233,0.15)] dark:shadow-none border border-sky-100 dark:border-slate-800 mb-6 flex flex-col gap-1 transition-colors duration-300">
-        <h1 className="text-2xl font-extrabold text-blue-950 dark:text-sky-50">
-          Riwayat Lokasi
-        </h1>
-        <p className="text-sm text-sky-700 dark:text-slate-400 font-medium">
-          24 Jam Terakhir •{" "}
-          <span className="text-blue-600 dark:text-blue-400 font-semibold">
-            {partner.nama}
-          </span>
-        </p>
+      {/* Kartu Header dengan Tombol Hapus */}
+      <div className="bg-sky-50 dark:bg-slate-900 p-5 rounded-3xl shadow-[0_8px_30px_rgba(14,165,233,0.15)] dark:shadow-none border border-sky-100 dark:border-slate-800 mb-6 flex justify-between items-center transition-colors duration-300">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-extrabold text-blue-950 dark:text-sky-50">
+            Riwayat Lokasi
+          </h1>
+          <p className="text-sm text-sky-700 dark:text-slate-400 font-medium">
+            24 Jam Terakhir •{" "}
+            <span className="text-blue-600 dark:text-blue-400 font-semibold">
+              {partner.nama}
+            </span>
+          </p>
+        </div>
+
+        {/* Tombol Hapus Riwayat */}
+        {history.length > 0 && (
+          <button
+            onClick={handleDeleteHistory}
+            className="p-3 bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400 rounded-2xl border border-red-200 dark:border-red-500/20 hover:bg-red-200 dark:hover:bg-red-500/20 transition-all active:scale-90 shadow-sm"
+            title="Hapus Semua Riwayat"
+          >
+            <Trash2 size={20} />
+          </button>
+        )}
       </div>
 
       {isLoading ? (
@@ -89,7 +125,7 @@ export default function History() {
           {history.map((loc) => (
             <div key={loc.id} className="relative pl-7 group">
               {/* Timeline Dot */}
-              <div className="absolute -left-11px top-1.5 w-5 h-5 bg-sky-50 dark:bg-slate-950 border-[5px] border-blue-500 dark:border-blue-500 rounded-full group-hover:scale-110 transition-transform"></div>
+              <div className="absolute -left-[11px] top-1.5 w-5 h-5 bg-sky-50 dark:bg-slate-950 border-[5px] border-blue-500 dark:border-blue-500 rounded-full group-hover:scale-110 transition-transform"></div>
 
               {/* Kartu Riwayat Per Item */}
               <div className="bg-sky-50 dark:bg-slate-900 p-5 rounded-3xl border border-sky-100 dark:border-slate-800 shadow-[0_8px_30px_rgba(14,165,233,0.15)] dark:shadow-none hover:shadow-md transition-all duration-300">
@@ -133,7 +169,7 @@ export default function History() {
                   </div>
                 </div>
 
-                {/* Tombol Maps diselaraskan dengan tema global (Biru terang) */}
+                {/* Tombol Maps */}
                 <a
                   href={`https://www.google.com/maps/search/?api=1&query=${loc.latitude},${loc.longitude}`}
                   target="_blank"
