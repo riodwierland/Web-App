@@ -83,8 +83,10 @@ export default function MapPage() {
   // Efek: Hanya kunci kamera ke lokasi pengguna pada SAAT PERTAMA KALI lokasi ditemukan
   useEffect(() => {
     if (map && displayLocation && !hasCenteredInitially) {
+      // PERBAIKAN: Mengubah animate menjadi true dan menambahkan durasi (1.5 detik)
       map.flyTo([displayLocation.latitude, displayLocation.longitude], 16, {
-        animate: false,
+        animate: true,
+        duration: 1.5,
       });
       setHasCenteredInitially(true);
     }
@@ -95,6 +97,7 @@ export default function MapPage() {
     if (map && displayLocation) {
       map.flyTo([displayLocation.latitude, displayLocation.longitude], 16, {
         animate: true,
+        duration: 1.5,
       });
     }
   };
