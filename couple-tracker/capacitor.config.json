@@ -1,0 +1,6 @@
+{
+  "appId": "com.riodwierland.coupletracker",
+  "appName": "CoupleTracker",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

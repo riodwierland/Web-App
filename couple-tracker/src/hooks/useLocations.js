@@ -116,13 +116,35 @@ export function useLocations() {
     };
   }, [partner]);
 
-  // Bersihkan interval saat komponen dibongkar
+  // 4. PERBAIKAN: Tangani Refresh / Tutup Aplikasi (Anti Ghost Status)
   useEffect(() => {
-    return () => {
-      if (watchIdRef.current)
-        navigator.geolocation.clearWatch(watchIdRef.current);
+    // Fungsi ini akan mengubah status menjadi offline
+    const handleBeforeUnload = () => {
+      if (isSharing && user) {
+        // Tembakkan perintah offline ke Supabase dengan sangat cepat
+        supabase
+          .from("locations")
+          .update({ is_online: false })
+          .eq("user_id", user.id)
+          .then();
+      }
     };
-  }, []);
+
+    // Dengarkan saat pengguna mau me-refresh halaman atau menutup tab
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+
+      // Hentikan pelacakan GPS lokal
+      if (watchIdRef.current) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+      }
+
+      // Jika komponen dibongkar (navigasi pindah halaman), matikan juga statusnya
+      handleBeforeUnload();
+    };
+  }, [isSharing, user]);
 
   return {
     myLocation,
