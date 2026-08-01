@@ -5,6 +5,7 @@ import AuthLayout from "./layouts/AuthLayout";
 import AppLayout from "./layouts/AppLayout";
 import History from "./pages/History";
 import Settings from "./pages/Settings";
+import { LocationProvider } from "./contexts/LocationContext";
 
 // 1. Import Halaman yang sudah kita buat UI-nya
 import Login from "./pages/Login";
@@ -18,29 +19,31 @@ import MapPage from "./pages/MapPage";
 function App() {
   return (
     <AuthProvider>
-      <Toaster position="top-center" richColors />
-      <HashRouter>
-        <Routes>
-          {/* Public / Auth Routes */}
-          <Route element={<AuthLayout />}>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-          </Route>
+      <LocationProvider>
+        <Toaster position="top-center" richColors />
+        <HashRouter>
+          <Routes>
+            {/* Public / Auth Routes */}
+            <Route element={<AuthLayout />}>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+            </Route>
 
-          {/* Protected Routes */}
-          <Route element={<AppLayout />}>
-            <Route path="/history" element={<History />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/map" element={<MapPage />} />
-            <Route path="/profile" element={<Profile />} />
-          </Route>
+            {/* Protected Routes */}
+            <Route element={<AppLayout />}>
+              <Route path="/history" element={<History />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/map" element={<MapPage />} />
+              <Route path="/profile" element={<Profile />} />
+            </Route>
 
-          {/* Default Redirect */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
-      </HashRouter>
+            {/* Default Redirect */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </HashRouter>
+      </LocationProvider>
     </AuthProvider>
   );
 }

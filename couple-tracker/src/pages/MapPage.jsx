@@ -3,7 +3,7 @@ import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import { Navigation, LocateFixed } from "lucide-react"; // Menambahkan ikon LocateFixed
-import { useLocations } from "../hooks/useLocations";
+import { useGlobalLocation } from "../contexts/LocationContext";
 import { useAuth } from "../contexts/AuthContext";
 import { usePartner } from "../hooks/usePartner";
 
@@ -44,7 +44,7 @@ export default function MapPage() {
   const { profile } = useAuth();
   const { partner } = usePartner();
   const { myLocation, partnerLocation, isSharing, toggleSharing } =
-    useLocations();
+    useGlobalLocation();
   const [localPos, setLocalPos] = useState(null);
 
   // State untuk mengontrol peta secara manual
