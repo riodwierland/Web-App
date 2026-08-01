@@ -40,23 +40,29 @@ export default function History() {
 
   // Fungsi untuk menghapus riwayat
   const handleDeleteHistory = async () => {
-    // Tampilkan dialog konfirmasi bawaan browser
     if (
       window.confirm(
         "Apakah Anda yakin ingin menghapus semua riwayat lokasi ini? Data yang dihapus tidak dapat dikembalikan.",
       )
     ) {
-      const { error } = await supabase
+      // PERBAIKAN: Tambahkan .select() di akhir
+      const { data, error } = await supabase
         .from("location_history")
         .delete()
-        .eq("user_id", partner.id); // Menghapus data pasangan yang sedang dilihat
+        .eq("user_id", partner.id)
+        .select();
 
       if (error) {
-        toast.error("Terjadi kesalahan saat menghapus riwayat.");
+        toast.error("Terjadi kesalahan sistem saat menghapus riwayat.");
         console.error(error);
+      } else if (data && data.length === 0) {
+        // Jika berhasil diakses tapi tidak ada yang terhapus (terhalang RLS)
+        toast.error(
+          "Gagal menghapus! Akses ditolak oleh keamanan database (RLS).",
+        );
       } else {
         toast.success("Riwayat lokasi berhasil dihapus.");
-        setHistory([]); // Langsung kosongkan daftar di layar tanpa perlu refresh
+        setHistory([]);
       }
     }
   };
